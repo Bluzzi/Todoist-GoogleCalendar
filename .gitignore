@@ -1,0 +1,13 @@
+# Modules:
+node_modules
+
+# Build:
+dist
+
+# Lock files:
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# Credentials:
+.api-key.json
