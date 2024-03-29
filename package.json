@@ -4,12 +4,19 @@
     "start": "node -r @swc-node/register -r tsconfig-paths/register ./src/main.ts",
     "lint": "eslint ./src",
     "lint:fix": "eslint ./src --fix",
-    "ts:check": "tsc --noEmit"
+    "ts:check": "tsc --noEmit",
+    "db:studio": "prisma studio --port 3002",
+    "db:reset": "prisma migrate reset",
+    "db:migration:create": "prisma migrate dev",
+    "db:migration:apply": "prisma migrate deploy",
+    "postinstall": "prisma generate"
   },
   "dependencies": {
-    "@googleapis/calendar": "^9.7.0",
+    "@doist/todoist-api-typescript": "^3.0.2",
+    "@prisma/client": "^5.11.0",
     "dayjs": "^1.11.10",
-    "googleapis": "^133.0.0"
+    "node-ical": "^0.18.0",
+    "zod": "^3.22.4"
   },
   "devDependencies": {
     "@bluzzi/eslint-config": "^1.1.0",
@@ -19,10 +26,18 @@
     "dotenv": "^16.3.1",
     "eslint": "^8.50.0",
     "nodemon": "^3.0.1",
+    "prisma": "^5.11.0",
     "tsconfig-paths": "^4.2.0",
     "typescript": "^5.2.2"
   },
   "eslintConfig": {
-    "extends": "@bluzzi"
+    "extends": "@bluzzi",
+    "rules": {
+      "@typescript-eslint/no-explicit-any": "off",
+      "@typescript-eslint/no-unsafe-assignment": "off",
+      "@typescript-eslint/no-unsafe-member-access": "off",
+      "@typescript-eslint/no-unsafe-return": "off",
+      "@typescript-eslint/no-unsafe-call": "off"
+    }
   }
 }

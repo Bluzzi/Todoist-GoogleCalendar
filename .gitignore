@@ -9,5 +9,8 @@ package-lock.json
 yarn.lock
 pnpm-lock.yaml
 
-# Credentials:
-.api-key.json
+# Environnement variables:
+.env*
+
+# SQLite:
+*.db*
