@@ -14,3 +14,5 @@
 //     console.error("Error fetching calendar events:", error);
 //   }
 // }
+
+// https://chat.openai.com/share/81155434-4421-4b94-9d4d-af32b7eeb434

@@ -9,7 +9,7 @@ datasource db {
 
 model GoogleUser {
   email String @id
-  token String
+  token String // refresh token
 }
 
 model EventSync {
