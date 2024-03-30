@@ -17,7 +17,7 @@ const createNextEvents = async(email: string): Promise<void> => {
     const task = await todoist.addTask({
       content: event.summary,
       description: `${event.hangoutLink || ""}\n\n${event.location || ""}\n\n${event.description || ""}`,
-      labels: ["calendar"],
+      labels: [email],
       dueDatetime: day.utc(event.start?.dateTime),
       duration: day(event.end?.dateTime).diff(event.start?.dateTime, "minute"),
       durationUnit: "minute"
