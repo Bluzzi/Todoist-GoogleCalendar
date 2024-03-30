@@ -8,15 +8,21 @@ datasource db {
 }
 
 model GoogleUser {
-  email String @id
-  token String // refresh token
+  email        String @id
+  refreshToken String // refresh token
+
+  EventSync EventSync[]
 }
 
 model EventSync {
   id String @id @default(uuid())
 
-  googleID  String
   todoistID String
 
-  lastUpdate DateTime
+  googleUser      GoogleUser @relation(fields: [googleUserEmail], references: [email])
+  googleUserEmail String
+
+  googleCalendarID String
+  googleEventID    String
+  googleLastUpdate DateTime
 }

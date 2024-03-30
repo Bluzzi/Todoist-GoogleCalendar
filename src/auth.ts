@@ -31,8 +31,8 @@ app.get(redirectPath, async context => {
 
     await db.googleUser.upsert({
       where: { email },
-      create: { email, token: tokenResponse.tokens.refresh_token! },
-      update: { token: tokenResponse.tokens.refresh_token! }
+      create: { email, refreshToken: tokenResponse.tokens.refresh_token! },
+      update: { refreshToken: tokenResponse.tokens.refresh_token! }
     });
 
     console.log(`AUTHENTIFIED AS: ${email}`);
