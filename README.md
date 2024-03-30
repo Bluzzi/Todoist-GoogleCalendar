@@ -14,7 +14,7 @@ This project is a Node.js-based CRON job that utilizes the Todoist API and Googl
 - `pnpm run data`: Starts a web application to visualize the database.
 
 ## Environment Variables
-```php
+```sh
 PORT=3000
 
 GOOGLE_CLIENT_ID="Your Google Client ID"
