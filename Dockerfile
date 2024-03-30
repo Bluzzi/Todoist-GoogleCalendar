@@ -1,7 +1,5 @@
 FROM node:19
 
-ARG RAILWAY_RUN_UID=0
-
 # Set workdir:
 WORKDIR /usr/src/app
 
