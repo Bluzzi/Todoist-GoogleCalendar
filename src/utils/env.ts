@@ -9,7 +9,7 @@ const schema = z.object({
 
   TODOIST_TOKEN: z.string(),
 
-  SQLITE_FILE: z.string()
+  POSTGRES_URL: z.string().url()
 });
 
 export const env = schema.parse(process.env);
