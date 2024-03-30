@@ -68,5 +68,6 @@ void (async() => {
     await updateEvents(user.email);
   }
 
+  await db.$disconnect();
   process.exit();
 })();
