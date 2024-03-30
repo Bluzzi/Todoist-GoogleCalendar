@@ -41,7 +41,8 @@ const getEvents = async(email: string, minDate?: Day, maxDate?: Day): Promise<Ca
       calendarId: cal.id!,
       singleEvents: true,
       timeMin: minDate?.toISOString(),
-      timeMax: maxDate?.toISOString()
+      timeMax: maxDate?.toISOString(),
+      showDeleted: true
     });
 
     events.push(...response.data.items!.map(event => ({ ...event, calendarId: cal.id! })));

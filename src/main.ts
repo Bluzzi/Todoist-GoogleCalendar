@@ -7,6 +7,8 @@ const createNextEvents = async(email: string): Promise<void> => {
   const events = await google.getEvents(email, day(), day().add(7, "day"));
 
   for (const event of events) {
+    if (event.status === "cancelled") continue;
+
     const eventSync = await db.eventSync.findFirst({ where: { googleEventID: event.id! } });
     if (eventSync) continue;
 
@@ -41,14 +43,19 @@ const updateEvents = async(email: string): Promise<void> => {
     const eventGoogle = eventsGoogle.find(event => event.id === eventSync.googleEventID)!;
 
     if (day(eventGoogle.updated).toISOString() !== day(eventSync.googleLastUpdate).toISOString()) {
-      await todoist.updateTask(eventSync.todoistID, {
-        content: eventGoogle.summary,
-        description: `${eventGoogle.hangoutLink || ""}\n\n${eventGoogle.location || ""}\n\n${eventGoogle.description || ""}`,
-        label: (await todoistUtils.getCalendarLabel()).id,
-        dueDatetime: day.utc(eventGoogle.start?.dateTime),
-        duration: day(eventGoogle.end?.dateTime).diff(eventGoogle.start?.dateTime, "minute"),
-        durationUnit: "minute"
-      });
+      if (eventGoogle.status === "cancelled") {
+        await todoist.closeTask(eventSync.todoistID);
+      } else {
+        await todoist.reopenTask(eventSync.todoistID);
+        await todoist.updateTask(eventSync.todoistID, {
+          content: eventGoogle.summary,
+          description: `${eventGoogle.hangoutLink || ""}\n\n${eventGoogle.location || ""}\n\n${eventGoogle.description || ""}`,
+          label: (await todoistUtils.getCalendarLabel()).id,
+          dueDatetime: day.utc(eventGoogle.start?.dateTime),
+          duration: day(eventGoogle.end?.dateTime).diff(eventGoogle.start?.dateTime, "minute"),
+          durationUnit: "minute"
+        });
+      }
 
       await db.eventSync.update({
         where: { id: eventSync.id },
