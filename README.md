@@ -1,4 +1,5 @@
 # Todoist Sync with Google Calendar
+[![Deploy on Railway](https://railway.app/button.svg)](https://railway.app/template/YYZMz2?referralCode=J6p1cI)
 
 ## Description
 This project is a Node.js-based CRON job that utilizes the Todoist API and Google Calendar API. Its primary function is to create a synchronized copy of all events from Google Calendar for the next 7 days on Todoist. It ensures synchronization of date, duration, title, and description of tasks, thus enabling users to access meeting links directly on Todoist, among other features.
