@@ -1,9 +1,18 @@
+import type { CalendarEvent } from "#/services/google";
 import { google } from "#/services/google";
 import { todoist } from "#/services/todoist";
-import { logger } from "#/utils/logger";
 import { day } from "#/utils/day";
 import { db } from "#/utils/db";
 import Cron from "croner";
+
+const logger = (action: "created" | "updated" | "deleted", event: CalendarEvent): void => {
+  console.log([
+    `${action.toUpperCase()} EVENT:`,
+    `- title: ${event.summary}`,
+    `- date: ${day.utc(event.start?.dateTime).format("LLLL")} (UTC)`,
+    `- duration: ${day(event.end?.dateTime).diff(event.start?.dateTime, "minute")} minutes`
+  ].join("\n"));
+};
 
 const createNextEvents = async(email: string): Promise<void> => {
   const events = await google.getEvents(email, day(), day().add(7, "day"));
@@ -69,8 +78,6 @@ const updateEvents = async(email: string): Promise<void> => {
 };
 
 const cron = Cron("* * * * *", async() => {
-  console.log("CRON STARTED ✔");
-
   const googleUsers = await db.googleUser.findMany();
 
   for (const user of googleUsers) {
@@ -80,3 +87,4 @@ const cron = Cron("* * * * *", async() => {
 });
 
 void cron.trigger();
+console.log("CRON STARTED ✔");

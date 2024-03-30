@@ -1,3 +1,4 @@
+import type { HttpBindings } from "@hono/node-server";
 import { Hono } from "hono";
 import { serve } from "@hono/node-server";
 import { OAuth2Client } from "google-auth-library";
@@ -5,12 +6,13 @@ import { people } from "@googleapis/people";
 import { env } from "#/utils/env";
 import { db } from "#/utils/db";
 import { randomUUID } from "crypto";
+import { logger } from "#/utils/logger";
 
-const url = `http://localhost:${env.PORT}`;
+const url = env.RAILWAY_PUBLIC_DOMAIN ? env.RAILWAY_PUBLIC_DOMAIN : `http://localhost:${env.PORT}`;
 const redirectPath = "/google/auth";
 const authorizationUUID = randomUUID();
 
-const app = new Hono();
+const app = new Hono<{ Bindings: HttpBindings }>();
 
 app.get(redirectPath, async context => {
   const client = new OAuth2Client(
@@ -58,5 +60,6 @@ app.get(redirectPath, async context => {
   return context.redirect(authorizeURL);
 });
 
-serve({ fetch: app.fetch, port: env.PORT });
-console.log(`AUTHENTICATION URL: ${url}${redirectPath}?authorization=${authorizationUUID}`);
+serve({ fetch: app.fetch, port: env.PORT }).on("listening", () => {
+  logger.info("auth link", `${url}${redirectPath}?authorization=${authorizationUUID}`);
+});
