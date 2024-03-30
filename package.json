@@ -6,6 +6,7 @@
     "lint": "eslint ./src",
     "lint:fix": "eslint ./src --fix",
     "ts:check": "tsc --noEmit",
+    "db:generate": "prisma generate",
     "db:reset": "prisma migrate reset",
     "db:migration:create": "prisma migrate dev",
     "db:migration:apply": "prisma migrate deploy",
