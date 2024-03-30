@@ -67,4 +67,6 @@ void (async() => {
     await createNextEvents(user.email);
     await updateEvents(user.email);
   }
+
+  process.exit();
 })();
