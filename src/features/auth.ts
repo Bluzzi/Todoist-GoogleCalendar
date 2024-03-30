@@ -4,9 +4,11 @@ import { OAuth2Client } from "google-auth-library";
 import { people } from "@googleapis/people";
 import { env } from "#/utils/env";
 import { db } from "#/utils/db";
+import { randomUUID } from "crypto";
 
 const url = `http://localhost:${env.PORT}`;
 const redirectPath = "/google/auth";
+const authorizationUUID = randomUUID();
 
 const app = new Hono();
 
@@ -35,11 +37,15 @@ app.get(redirectPath, async context => {
       update: { refreshToken: tokenResponse.tokens.refresh_token! }
     });
 
-    console.log(`AUTHENTIFIED AS: ${email}`);
+    console.log(`NEW AUTHENTIFIED ACCOUNT: ${email}`);
     return context.text(`Successful connection! (${email})`);
   }
 
   // No code found, we send a OAuth consent screen to the user:
+  const authorization = context.req.query("authorization");
+
+  if (authorization !== authorizationUUID) return context.text("Unauthorized");
+
   const authorizeURL = client.generateAuthUrl({
     access_type: "offline",
     scope: [
@@ -53,4 +59,4 @@ app.get(redirectPath, async context => {
 });
 
 serve({ fetch: app.fetch, port: env.PORT });
-console.log(`OPEN THIS URL: ${url}${redirectPath}`);
+console.log(`AUTHENTICATION URL: ${url}${redirectPath}?authorization=${authorizationUUID}`);
