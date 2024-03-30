@@ -9,6 +9,7 @@ COPY package*.json ./
 RUN npm install
 
 # Apply SQL migrations:
+ARG SQLITE_FILE
 RUN npm run db:migration:apply
 
 # Copy all files:
