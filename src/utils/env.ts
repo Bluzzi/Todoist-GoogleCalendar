@@ -2,7 +2,7 @@ import { z } from "zod";
 import "dotenv/config";
 
 const schema = z.object({
-  RAILWAY_PUBLIC_DOMAIN: z.string().url().optional(),
+  RAILWAY_PUBLIC_DOMAIN: z.string().transform(value => `https://${value}`).optional(),
   PORT: z.coerce.number().default(3000),
 
   CRON: z.string().default("* * * * *"),
