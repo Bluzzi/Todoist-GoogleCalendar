@@ -28,6 +28,35 @@ const createNextEvents = async(email: string): Promise<void> => {
       googleEventID: event.id!,
       googleLastUpdate: event.updated!
     } });
+
+    console.log(`NEW EVENT: "${event.summary}" — ${day.utc(event.start?.dateTime).format("LLLL")}`);
+  }
+};
+
+const updateEvents = async(email: string): Promise<void> => {
+  const eventsGoogle = await google.getEvents(email, day(), day().add(7, "day"));
+  const eventsSync = await db.eventSync.findMany({ where: { googleEventID: { in: eventsGoogle.map(event => event.id!) } } });
+
+  for (const eventSync of eventsSync) {
+    const eventGoogle = eventsGoogle.find(event => event.id === eventSync.googleEventID)!;
+
+    if (day(eventGoogle.updated).toISOString() !== day(eventSync.googleLastUpdate).toISOString()) {
+      await todoist.updateTask(eventSync.todoistID, {
+        content: eventGoogle.summary,
+        description: `${eventGoogle.hangoutLink || ""}\n\n${eventGoogle.location || ""}\n\n${eventGoogle.description || ""}`,
+        label: (await todoistUtils.getCalendarLabel()).id,
+        dueDatetime: day.utc(eventGoogle.start?.dateTime),
+        duration: day(eventGoogle.end?.dateTime).diff(eventGoogle.start?.dateTime, "minute"),
+        durationUnit: "minute"
+      });
+
+      await db.eventSync.update({
+        where: { id: eventSync.id },
+        data: { googleLastUpdate: eventGoogle.updated! }
+      });
+
+      console.log(`UPDATE EVENT: "${eventGoogle.summary}" — ${day.utc(eventGoogle.start?.dateTime).format("LLLL")}`);
+    }
   }
 };
 
@@ -36,5 +65,6 @@ void (async() => {
 
   for (const user of googleUsers) {
     await createNextEvents(user.email);
+    await updateEvents(user.email);
   }
 })();
