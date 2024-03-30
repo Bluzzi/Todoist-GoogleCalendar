@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "@doist/todoist-api-typescript": "^3.0.2",
+    "@googleapis/calendar": "^9.7.0",
     "@googleapis/people": "^3.0.7",
     "@hono/node-server": "^1.9.0",
     "@prisma/client": "^5.11.0",
