@@ -61,5 +61,5 @@ app.get(redirectPath, async context => {
 });
 
 serve({ fetch: app.fetch, port: env.PORT }).on("listening", () => {
-  logger.info("auth link", `${url}${redirectPath}?authorization=${authorizationUUID}`);
+  logger.success("auth", `connection url - ${url}${redirectPath}?authorization=${authorizationUUID}`);
 });

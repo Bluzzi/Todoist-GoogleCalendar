@@ -3,11 +3,13 @@ import { google } from "#/services/google";
 import { todoist } from "#/services/todoist";
 import { day } from "#/utils/day";
 import { db } from "#/utils/db";
+import { env } from "#/utils/env";
+import { logger } from "#/utils/logger";
 import Cron from "croner";
 
-const logger = (action: "created" | "updated" | "deleted", event: CalendarEvent): void => {
-  console.log([
-    `${action.toUpperCase()} EVENT:`,
+const logUpdate = (action: "created" | "updated" | "deleted", event: CalendarEvent): void => {
+  logger.info("event", [
+    `${action.toUpperCase()}`,
     `- title: ${event.summary}`,
     `- date: ${day.utc(event.start?.dateTime).format("LLLL")} (UTC)`,
     `- duration: ${day(event.end?.dateTime).diff(event.start?.dateTime, "minute")} minutes`
@@ -42,7 +44,7 @@ const createNextEvents = async(email: string): Promise<void> => {
       googleLastUpdate: event.updated!
     } });
 
-    logger("created", event);
+    logUpdate("created", event);
   }
 };
 
@@ -56,7 +58,8 @@ const updateEvents = async(email: string): Promise<void> => {
     if (day(eventGoogle.updated).toISOString() !== day(eventSync.googleLastUpdate).toISOString()) {
       if (eventGoogle.status === "cancelled") {
         await todoist.closeTask(eventSync.todoistID);
-        logger("deleted", eventGoogle);
+
+        logUpdate("deleted", eventGoogle);
       } else {
         await todoist.reopenTask(eventSync.todoistID);
         await todoist.updateTask(eventSync.todoistID, {
@@ -66,7 +69,8 @@ const updateEvents = async(email: string): Promise<void> => {
           duration: day(eventGoogle.end?.dateTime).diff(eventGoogle.start?.dateTime, "minute"),
           durationUnit: "minute"
         });
-        logger("updated", eventGoogle);
+
+        logUpdate("updated", eventGoogle);
       }
 
       await db.eventSync.update({
@@ -86,5 +90,6 @@ const cron = Cron("* * * * *", async() => {
   }
 });
 
-void cron.trigger();
-console.log("CRON STARTED ✔");
+if (process.argv.includes("dev")) void cron.trigger();
+
+logger.success("sync", `cron ${env.CRON} started`);

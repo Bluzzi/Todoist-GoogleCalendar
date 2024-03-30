@@ -5,6 +5,8 @@ const schema = z.object({
   RAILWAY_PUBLIC_DOMAIN: z.string().url().optional(),
   PORT: z.coerce.number().default(3000),
 
+  CRON: z.string().default("* * * * *"),
+
   GOOGLE_CLIENT_ID: z.string(),
   GOOGLE_CLIENT_SECRET: z.string(),
 

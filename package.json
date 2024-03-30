@@ -1,7 +1,7 @@
 {
   "scripts": {
     "start": "node -r @swc-node/register ./src/main.ts",
-    "dev": "nodemon --exec node -r @swc-node/register ./src/main.ts",
+    "dev": "nodemon --exec node -r @swc-node/register ./src/main.ts dev",
     "lint": "eslint ./src",
     "lint:fix": "eslint ./src --fix",
     "ts:check": "tsc --noEmit",
