@@ -1,8 +1,9 @@
 import { google } from "#/services/google";
 import { todoist, todoistUtils } from "#/services/todoist";
+import { logger } from "#/utils/logger";
 import { day } from "#/utils/day";
 import { db } from "#/utils/db";
-import cron from "node-cron";
+import Cron from "croner";
 
 const createNextEvents = async(email: string): Promise<void> => {
   const events = await google.getEvents(email, day(), day().add(7, "day"));
@@ -32,10 +33,8 @@ const createNextEvents = async(email: string): Promise<void> => {
       googleLastUpdate: event.updated!
     } });
 
-    console.log(`NEW EVENT: "${event.summary}" — ${day.utc(event.start?.dateTime).format("LLLL")}`);
+    logger("created", event);
   }
-
-  console.log("end create");
 };
 
 const updateEvents = async(email: string): Promise<void> => {
@@ -48,6 +47,7 @@ const updateEvents = async(email: string): Promise<void> => {
     if (day(eventGoogle.updated).toISOString() !== day(eventSync.googleLastUpdate).toISOString()) {
       if (eventGoogle.status === "cancelled") {
         await todoist.closeTask(eventSync.todoistID);
+        logger("deleted", eventGoogle);
       } else {
         await todoist.reopenTask(eventSync.todoistID);
         await todoist.updateTask(eventSync.todoistID, {
@@ -57,25 +57,24 @@ const updateEvents = async(email: string): Promise<void> => {
           duration: day(eventGoogle.end?.dateTime).diff(eventGoogle.start?.dateTime, "minute"),
           durationUnit: "minute"
         });
+        logger("updated", eventGoogle);
       }
 
       await db.eventSync.update({
         where: { id: eventSync.id },
         data: { googleLastUpdate: eventGoogle.updated! }
       });
-
-      console.log(`UPDATE EVENT: "${eventGoogle.summary}" — ${day.utc(eventGoogle.start?.dateTime).format("LLLL")}`);
     }
   }
-
-  console.log("end update");
 };
 
-cron.schedule("* * * * *", async() => {
+const cron = Cron("* * * * *", async() => {
   const googleUsers = await db.googleUser.findMany();
 
   for (const user of googleUsers) {
     await createNextEvents(user.email);
     await updateEvents(user.email);
   }
-}, { runOnInit: true });
+});
+
+void cron.trigger();

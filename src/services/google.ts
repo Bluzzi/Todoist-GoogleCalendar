@@ -5,6 +5,8 @@ import { env } from "#/utils/env";
 import { calendar } from "@googleapis/calendar";
 import { OAuth2Client } from "google-auth-library";
 
+export type CalendarEvent = calendar_v3.Schema$Event & { calendarId: string };
+
 const client = async(email: string): Promise<OAuth2Client> => {
   // Get curremt user data:
   const googleUser = await db.googleUser.findUnique({ where: { email } });
@@ -27,8 +29,6 @@ const getCalendars = async(email: string): Promise<calendar_v3.Schema$CalendarLi
 
   return (await api.calendarList.list()).data.items!;
 };
-
-type CalendarEvent = calendar_v3.Schema$Event & { calendarId: string };
 
 const getEvents = async(email: string, minDate?: Day, maxDate?: Day): Promise<CalendarEvent[]> => {
   const api = calendar({ version: "v3", auth: await client(email) });
