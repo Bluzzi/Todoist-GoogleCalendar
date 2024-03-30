@@ -9,9 +9,9 @@ This project is a Node.js-based CRON job that utilizes the Todoist API and Googl
 - Synchronizes date, duration, title, and description of tasks.
 
 ## Scripts
-1. **pnpm run start:** Executes the CRON job, which runs every minute and manages synchronization.
-2. **pnpm run auth:** Launches a small server to facilitate connecting Google accounts for synchronization.
-3. **pnpm run data:** Starts a web application to visualize the database.
+- `pnpm run start`: Executes the CRON job, which runs every minute and manages synchronization.
+- `pnpm run auth`: Launches a small server to facilitate connecting Google accounts for synchronization.
+- `pnpm run data`: Starts a web application to visualize the database.
 
 ## Environment Variables
 ```sh
