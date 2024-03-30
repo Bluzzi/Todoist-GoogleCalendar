@@ -22,6 +22,7 @@
     "dotenv": "^16.4.5",
     "google-auth-library": "^9.7.0",
     "hono": "^4.1.5",
+    "rustic-error": "^0.2.3",
     "zod": "^3.22.4"
   },
   "devDependencies": {

@@ -6,6 +6,7 @@ import { db } from "#/utils/db";
 import { env } from "#/utils/env";
 import { logger } from "#/utils/logger";
 import Cron from "croner";
+import { safe } from "rustic-error";
 
 const logUpdate = (action: "created" | "updated" | "deleted", event: CalendarEvent): void => {
   logger.info("event", [
@@ -57,18 +58,18 @@ const updateEvents = async(email: string): Promise<void> => {
 
     if (day(eventGoogle.updated).toISOString() !== day(eventSync.googleLastUpdate).toISOString()) {
       if (eventGoogle.status === "cancelled") {
-        await todoist.closeTask(eventSync.todoistID);
+        await safe(() => todoist.closeTask(eventSync.todoistID));
 
         logUpdate("deleted", eventGoogle);
       } else {
-        await todoist.reopenTask(eventSync.todoistID);
-        await todoist.updateTask(eventSync.todoistID, {
+        await safe(() => todoist.reopenTask(eventSync.todoistID));
+        await safe(() => todoist.updateTask(eventSync.todoistID, {
           content: eventGoogle.summary,
           description: `${eventGoogle.hangoutLink || ""}\n\n${eventGoogle.location || ""}\n\n${eventGoogle.description || ""}`,
           dueDatetime: day.utc(eventGoogle.start?.dateTime),
           duration: day(eventGoogle.end?.dateTime).diff(eventGoogle.start?.dateTime, "minute"),
           durationUnit: "minute"
-        });
+        }));
 
         logUpdate("updated", eventGoogle);
       }
