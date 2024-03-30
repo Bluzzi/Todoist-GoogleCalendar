@@ -60,6 +60,6 @@ app.get(redirectPath, async context => {
   return context.redirect(authorizeURL);
 });
 
-serve({ fetch: app.fetch, port: env.PORT }).on("listening", () => {
+serve({ fetch: app.fetch, hostname: "0.0.0.0", port: env.PORT }).on("listening", () => {
   logger.success("auth", `connection url - ${url}${redirectPath}?authorization=${authorizationUUID}`);
 });

@@ -1,4 +1,4 @@
-# Todoist Sync with Google Calendar
+# Todoist sync Google Calendar
 [![Deploy on Railway](https://railway.app/button.svg)](https://railway.app/template/YYZMz2?referralCode=J6p1cI)
 
 ## Description
