@@ -1,13 +1,14 @@
 FROM node:19
 
+ARG RAILWAY_RUN_UID=0
+
 # Set workdir:
 WORKDIR /usr/src/app
 
-# Install dependencies and generate Prisma client:
+# Install dependencies:
 COPY prisma ./
 COPY package*.json ./
 RUN npm install
-RUN npm run db:generate
 
 # Apply SQL migrations:
 ARG SQLITE_FILE
