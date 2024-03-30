@@ -2,6 +2,7 @@ import { google } from "#/services/google";
 import { todoist, todoistUtils } from "#/services/todoist";
 import { day } from "#/utils/day";
 import { db } from "#/utils/db";
+import cron from "node-cron";
 
 const createNextEvents = async(email: string): Promise<void> => {
   const events = await google.getEvents(email, day(), day().add(7, "day"));
@@ -70,15 +71,11 @@ const updateEvents = async(email: string): Promise<void> => {
   console.log("end update");
 };
 
-void (async() => {
+cron.schedule("* * * * *", async() => {
   const googleUsers = await db.googleUser.findMany();
 
   for (const user of googleUsers) {
     await createNextEvents(user.email);
     await updateEvents(user.email);
   }
-
-  console.log("exit");
-  await db.$disconnect();
-  process.exit();
-})();
+}, { runOnInit: true });
