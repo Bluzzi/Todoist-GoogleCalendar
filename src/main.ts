@@ -15,7 +15,7 @@ const createNextEvents = async(email: string): Promise<void> => {
     const task = await todoist.addTask({
       content: event.summary,
       description: `${event.hangoutLink || ""}\n\n${event.location || ""}\n\n${event.description || ""}`,
-      label: (await todoistUtils.getCalendarLabel()).id,
+      labels: [(await todoistUtils.getCalendarLabel()).id],
       dueDatetime: day.utc(event.start?.dateTime),
       duration: day(event.end?.dateTime).diff(event.start?.dateTime, "minute"),
       durationUnit: "minute"
@@ -52,7 +52,6 @@ const updateEvents = async(email: string): Promise<void> => {
         await todoist.updateTask(eventSync.todoistID, {
           content: eventGoogle.summary,
           description: `${eventGoogle.hangoutLink || ""}\n\n${eventGoogle.location || ""}\n\n${eventGoogle.description || ""}`,
-          label: (await todoistUtils.getCalendarLabel()).id,
           dueDatetime: day.utc(eventGoogle.start?.dateTime),
           duration: day(eventGoogle.end?.dateTime).diff(eventGoogle.start?.dateTime, "minute"),
           durationUnit: "minute"
@@ -79,7 +78,7 @@ void (async() => {
     await updateEvents(user.email);
   }
 
+  console.log("exit");
   await db.$disconnect();
   process.exit();
-  console.log("exit");
 })();
