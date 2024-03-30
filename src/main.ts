@@ -68,6 +68,7 @@ const updateEvents = async(email: string): Promise<void> => {
 };
 
 void (async() => {
+  console.log("check");
   const googleUsers = await db.googleUser.findMany();
 
   for (const user of googleUsers) {
