@@ -33,6 +33,8 @@ const createNextEvents = async(email: string): Promise<void> => {
 
     console.log(`NEW EVENT: "${event.summary}" — ${day.utc(event.start?.dateTime).format("LLLL")}`);
   }
+
+  console.log("end create");
 };
 
 const updateEvents = async(email: string): Promise<void> => {
@@ -65,10 +67,11 @@ const updateEvents = async(email: string): Promise<void> => {
       console.log(`UPDATE EVENT: "${eventGoogle.summary}" — ${day.utc(eventGoogle.start?.dateTime).format("LLLL")}`);
     }
   }
+
+  console.log("end update");
 };
 
 void (async() => {
-  console.log("check");
   const googleUsers = await db.googleUser.findMany();
 
   for (const user of googleUsers) {
@@ -78,4 +81,5 @@ void (async() => {
 
   await db.$disconnect();
   process.exit();
+  console.log("exit");
 })();
