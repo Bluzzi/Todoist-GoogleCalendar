@@ -1,3 +1,2 @@
-# To Do
-- [ ] Set the webserver public?
-- [ ] Write this README
+# Todoist-GoogleCalendar
+My personnal integration between Google Calendar and Todoist.

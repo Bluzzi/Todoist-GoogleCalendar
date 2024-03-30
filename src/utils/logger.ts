@@ -5,7 +5,7 @@ export const logger = (action: "created" | "updated" | "deleted", event: Calenda
   console.log([
     `${action.toUpperCase()} EVENT:`,
     `- title: ${event.summary}`,
-    `- date: ${day(event.start?.dateTime).format("LLLL")}:`,
+    `- date: ${day.utc(event.start?.dateTime).format("LLLL")} (UTC)`,
     `- duration: ${day(event.end?.dateTime).diff(event.start?.dateTime, "minute")} minutes`
   ].join("\n"));
 };

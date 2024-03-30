@@ -1,5 +1,5 @@
 import { google } from "#/services/google";
-import { todoist, todoistUtils } from "#/services/todoist";
+import { todoist } from "#/services/todoist";
 import { logger } from "#/utils/logger";
 import { day } from "#/utils/day";
 import { db } from "#/utils/db";
@@ -17,7 +17,7 @@ const createNextEvents = async(email: string): Promise<void> => {
     const task = await todoist.addTask({
       content: event.summary,
       description: `${event.hangoutLink || ""}\n\n${event.location || ""}\n\n${event.description || ""}`,
-      labels: [(await todoistUtils.getCalendarLabel()).id],
+      labels: ["calendar"],
       dueDatetime: day.utc(event.start?.dateTime),
       duration: day(event.end?.dateTime).diff(event.start?.dateTime, "minute"),
       durationUnit: "minute"
