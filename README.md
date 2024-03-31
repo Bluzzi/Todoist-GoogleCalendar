@@ -18,7 +18,7 @@ You'll need to set the following environment variables (if you're using your own
 PORT=3000
 
 # The CRON string (default "* * * * *" every minute):
-CRON=3000
+CRON="* * * * *"
 
 # Google OAuth 2.0 Client ID and secret:
 GOOGLE_CLIENT_ID="Google Client ID"
