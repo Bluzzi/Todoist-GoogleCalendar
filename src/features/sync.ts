@@ -31,7 +31,7 @@ const createNextEvents = async(email: string): Promise<void> => {
       description: `${event.hangoutLink ? `${event.hangoutLink}?authuser=${email}` : ""}\n\n${event.location || ""}\n\n${event.description || ""}`,
       labels: [email],
       dueDatetime: day.utc(event.start?.dateTime),
-      duration: day(event.end?.dateTime).diff(event.start?.dateTime, "minute"),
+      duration: event.end && event.start ? day(event.end?.dateTime).diff(event.start?.dateTime, "minute") : 0,
       durationUnit: "minute"
     });
 
@@ -71,7 +71,7 @@ const updateEvents = async(email: string): Promise<void> => {
             eventGoogle.description || ""
           ].join("\n\n"),
           dueDatetime: day.utc(eventGoogle.start?.dateTime),
-          duration: day(eventGoogle.end?.dateTime).diff(eventGoogle.start?.dateTime, "minute"),
+          duration: eventGoogle.end && eventGoogle.start ? day(eventGoogle.end?.dateTime).diff(eventGoogle.start?.dateTime, "minute") : 0,
           durationUnit: "minute"
         }));
 
