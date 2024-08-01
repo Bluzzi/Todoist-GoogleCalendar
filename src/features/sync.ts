@@ -27,12 +27,11 @@ const createNextEvents = async(email: string): Promise<void> => {
     const eventSync = await db.eventSync.findFirst({ where: { googleEventID: event.id! } });
     if (eventSync) continue;
 
-    const duration = (event.end && event.start ? {
+    let duration = (event.end && event.start ? {
       duration: day(event.end.dateTime).diff(event.start.dateTime, "minute"),
       durationUnit: "minute"
     } : {}) satisfies { duration?: Duration["amount"]; durationUnit?: Duration["unit"] };
-
-    console.log(duration);
+    if (duration.duration === 0) duration = {};
 
     const task = await todoist.addTask({
       content: event.summary ?? "No title",
@@ -69,12 +68,11 @@ const updateEvents = async(email: string): Promise<void> => {
 
         logUpdate("deleted", eventGoogle);
       } else {
-        const duration = (eventGoogle.end && eventGoogle.start ? {
+        let duration = (eventGoogle.end && eventGoogle.start ? {
           duration: day(eventGoogle.end.dateTime).diff(eventGoogle.start.dateTime, "minute"),
           durationUnit: "minute"
         } : {}) satisfies { duration?: Duration["amount"]; durationUnit?: Duration["unit"] };
-
-        console.log(duration);
+        if (duration.duration === 0) duration = {};
 
         await safe(() => todoist.reopenTask(eventSync.todoistID));
         await safe(() => todoist.updateTask(eventSync.todoistID, {
