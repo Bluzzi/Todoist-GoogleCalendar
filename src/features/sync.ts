@@ -7,7 +7,6 @@ import { env } from "#/utils/env";
 import { logger } from "#/utils/logger";
 import type { Duration } from "@doist/todoist-api-typescript";
 import Cron from "croner";
-import { duration } from "dayjs";
 import { safe } from "rustic-error";
 
 const logUpdate = (action: "created" | "updated" | "deleted", event: CalendarEvent): void => {
