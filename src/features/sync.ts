@@ -5,7 +5,9 @@ import { day } from "#/utils/day";
 import { db } from "#/utils/db";
 import { env } from "#/utils/env";
 import { logger } from "#/utils/logger";
+import type { Duration } from "@doist/todoist-api-typescript";
 import Cron from "croner";
+import { duration } from "dayjs";
 import { safe } from "rustic-error";
 
 const logUpdate = (action: "created" | "updated" | "deleted", event: CalendarEvent): void => {
@@ -26,13 +28,17 @@ const createNextEvents = async(email: string): Promise<void> => {
     const eventSync = await db.eventSync.findFirst({ where: { googleEventID: event.id! } });
     if (eventSync) continue;
 
+    const duration = (event.end && event.start ? {
+      duration: day(event.end?.dateTime).diff(event.start?.dateTime, "minute"),
+      durationUnit: "minute"
+    } : {}) satisfies { duration?: Duration["amount"]; durationUnit?: Duration["unit"] };
+
     const task = await todoist.addTask({
       content: event.summary ?? "No title",
       description: `${event.hangoutLink ? `${event.hangoutLink}?authuser=${email}` : ""}\n\n${event.location || ""}\n\n${event.description || ""}`,
       labels: [email],
       dueDatetime: day.utc(event.start?.dateTime).toISOString(),
-      duration: event.end && event.start ? day(event.end?.dateTime).diff(event.start?.dateTime, "minute") : 0,
-      durationUnit: "minute"
+      ...duration
     });
 
     await db.eventSync.create({ data: {
@@ -62,6 +68,11 @@ const updateEvents = async(email: string): Promise<void> => {
 
         logUpdate("deleted", eventGoogle);
       } else {
+        const duration = (eventGoogle.end && eventGoogle.start ? {
+          duration: day(eventGoogle.end?.dateTime).diff(eventGoogle.start?.dateTime, "minute"),
+          durationUnit: "minute"
+        } : {}) satisfies { duration?: Duration["amount"]; durationUnit?: Duration["unit"] };
+
         await safe(() => todoist.reopenTask(eventSync.todoistID));
         await safe(() => todoist.updateTask(eventSync.todoistID, {
           content: eventGoogle.summary ?? "No title",
@@ -71,8 +82,7 @@ const updateEvents = async(email: string): Promise<void> => {
             eventGoogle.description || ""
           ].join("\n\n"),
           dueDatetime: day.utc(eventGoogle.start?.dateTime).toISOString(),
-          duration: eventGoogle.end && eventGoogle.start ? day(eventGoogle.end?.dateTime).diff(eventGoogle.start?.dateTime, "minute") : 0,
-          durationUnit: "minute"
+          ...duration
         }));
 
         logUpdate("updated", eventGoogle);
