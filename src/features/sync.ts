@@ -27,10 +27,10 @@ const createNextEvents = async(email: string): Promise<void> => {
     if (eventSync) continue;
 
     const task = await todoist.addTask({
-      content: event.summary,
+      content: event.summary ?? "No title",
       description: `${event.hangoutLink ? `${event.hangoutLink}?authuser=${email}` : ""}\n\n${event.location || ""}\n\n${event.description || ""}`,
       labels: [email],
-      dueDatetime: day.utc(event.start?.dateTime),
+      dueDatetime: day.utc(event.start?.dateTime).toISOString(),
       duration: event.end && event.start ? day(event.end?.dateTime).diff(event.start?.dateTime, "minute") : 0,
       durationUnit: "minute"
     });
@@ -64,13 +64,13 @@ const updateEvents = async(email: string): Promise<void> => {
       } else {
         await safe(() => todoist.reopenTask(eventSync.todoistID));
         await safe(() => todoist.updateTask(eventSync.todoistID, {
-          content: eventGoogle.summary,
+          content: eventGoogle.summary ?? "No title",
           description: [
             eventGoogle.hangoutLink ? `${eventGoogle.hangoutLink}?authuser=${email}` : "",
             eventGoogle.location || "",
             eventGoogle.description || ""
           ].join("\n\n"),
-          dueDatetime: day.utc(eventGoogle.start?.dateTime),
+          dueDatetime: day.utc(eventGoogle.start?.dateTime).toISOString(),
           duration: eventGoogle.end && eventGoogle.start ? day(eventGoogle.end?.dateTime).diff(eventGoogle.start?.dateTime, "minute") : 0,
           durationUnit: "minute"
         }));
