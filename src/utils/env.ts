@@ -12,7 +12,9 @@ const schema = z.object({
 
   TODOIST_TOKEN: z.string(),
 
-  POSTGRES_URL: z.string().url()
+  POSTGRES_URL: z.string().url(),
+
+  IGNORE_EVENTS: z.string().transform(value => value.split(",")).optional()
 });
 
 export const env = schema.parse(process.env);

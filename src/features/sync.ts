@@ -23,6 +23,7 @@ const createNextEvents = async(email: string): Promise<void> => {
 
   for (const event of events) {
     if (event.status === "cancelled") continue;
+    if (env.IGNORE_EVENTS?.filter(ignoreName => ignoreName.includes(event.summary?.toLowerCase() ?? "")).length) continue;
 
     const eventSync = await db.eventSync.findFirst({ where: { googleEventID: event.id! } });
     if (eventSync) continue;
