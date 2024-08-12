@@ -31,7 +31,7 @@ TODOIST_TOKEN="Todoist Token"
 POSTGRES_URL="Postgres URL"
 
 # Ignored events (comma-separated list of event names):
-IGNORE_EVENTS="Absent au bureau, Running"
+IGNORE_EVENTS="Absent au bureau,Running"
 ```
 
 ## Contributing
