@@ -26,3 +26,10 @@ model EventSync {
   googleEventID    String
   googleLastUpdate DateTime
 }
+
+model EventsSyncProjects {
+  id String @id @default(uuid())
+
+  email     String
+  projectID String
+}
