@@ -14,6 +14,8 @@ const schema = z.object({
 
   POSTGRES_URL: z.string().url(),
 
+  DAYSTOFECTH: z.coerce.number().default(3),
+
   IGNORE_EVENTS: z.string().transform(value => value.split(",")).optional()
 });
 

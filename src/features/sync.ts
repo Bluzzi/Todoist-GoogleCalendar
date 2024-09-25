@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 import type { CalendarEvent } from "#/services/google";
 import { google } from "#/services/google";
 import { todoist } from "#/services/todoist";
@@ -13,13 +14,16 @@ const logUpdate = (action: "created" | "updated" | "deleted", event: CalendarEve
   logger.info("event", [
     `${action.toUpperCase()}`,
     `- title: ${event.summary}`,
-    `- date: ${day.utc(event.start?.dateTime).format("LLLL")} (UTC)`,
+    `- date: ${day.utc(event.start?.dateTime ?? event.start?.date).format("LLLL")} (UTC)`,
     `- duration: ${day(event.end?.dateTime).diff(event.start?.dateTime, "minute")} minutes`
   ].join("\n"));
 };
 
 const createNextEvents = async(email: string): Promise<void> => {
-  const events = await google.getEvents(email, day(), day().add(7, "day"));
+  const events = await google.getEvents(email, day(), day().add(env.DAYSTOFECTH, "day"));
+  const syncWithProjects = await db.eventsSyncProjects.findMany({
+    orderBy: { priority: "asc" }
+  });
 
   for (const event of events) {
     if (event.status === "cancelled") continue;
@@ -28,36 +32,55 @@ const createNextEvents = async(email: string): Promise<void> => {
     const eventSync = await db.eventSync.findFirst({ where: { googleEventID: event.id! } });
     if (eventSync) continue;
 
-    let duration = (event.end && event.start ? {
-      duration: day(event.end.dateTime).diff(event.start.dateTime, "minute"),
-      durationUnit: "minute"
-    } : {}) satisfies { duration?: Duration["amount"]; durationUnit?: Duration["unit"] };
-    if (duration.duration === 0) duration = {};
+    let duration: { duration?: Duration["amount"]; durationUnit?: Duration["unit"] } | null
+      = (event.end && event.start ? {
+        duration: day(event.end.dateTime).diff(event.start.dateTime, "minute"),
+        durationUnit: "minute"
+      } : null);
 
-    const task = await todoist.addTask({
-      content: event.summary ?? "No title",
-      description: `${event.hangoutLink ? `${event.hangoutLink}?authuser=${email}` : ""}\n\n${event.location || ""}\n\n${event.description || ""}`,
-      labels: [email],
-      dueDatetime: day.utc(event.start?.dateTime).toISOString(),
-      ...duration
-    });
+    if (duration && duration.duration === 0) {
+      duration = null;
+    }
 
-    await db.eventSync.create({ data: {
-      todoistID: task.id,
+    for (const project of syncWithProjects) {
+      const emailMatches = project.email === email;
+      const titleMatches = project.eventTitles.some(title => event.summary?.toLowerCase().includes(title.toLowerCase()));
 
-      googleUserEmail: email,
+      const dueDateTime = event.start?.dateTime ? day.utc(event.start?.dateTime).toISOString() : day.utc(event.start?.date).format("YYYY-MM-DD").toString();
 
-      googleCalendarID: event.calendarId,
-      googleEventID: event.id!,
-      googleLastUpdate: event.updated!
-    } });
+      if (emailMatches || titleMatches) {
+        const task = await todoist.addTask({
+          content: event.summary ?? "No title",
+          description: [
+            event.hangoutLink ? `${event.hangoutLink}?authuser=${email}` : "",
+            event.location || "",
+            event.description || ""
+          ].join("\n\n"),
+          dueDatetime: dueDateTime,
+          projectID: project.projectID,
+          ...duration
+        });
 
-    logUpdate("created", event);
+        await db.eventSync.create({ data: {
+          todoistID: task.id,
+
+          googleUserEmail: email,
+
+          googleCalendarID: event.calendarId,
+          googleEventID: event.id!,
+          googleLastUpdate: event.updated!
+        } });
+
+        logUpdate("created", event);
+
+        break;
+      }
+    }
   }
 };
 
 const updateEvents = async(email: string): Promise<void> => {
-  const eventsGoogle = await google.getEvents(email, day(), day().add(7, "day"));
+  const eventsGoogle = await google.getEvents(email, day(), day().add(env.DAYSTOFECTH, "day"));
   const eventsSync = await db.eventSync.findMany({ where: { googleEventID: { in: eventsGoogle.map(event => event.id!) } } });
 
   for (const eventSync of eventsSync) {
@@ -69,11 +92,17 @@ const updateEvents = async(email: string): Promise<void> => {
 
         logUpdate("deleted", eventGoogle);
       } else {
-        let duration = (eventGoogle.end && eventGoogle.start ? {
+        let duration: { duration?: Duration["amount"]; durationUnit?: Duration["unit"] } | null
+        = (eventGoogle.end && eventGoogle.start ? {
           duration: day(eventGoogle.end.dateTime).diff(eventGoogle.start.dateTime, "minute"),
           durationUnit: "minute"
-        } : {}) satisfies { duration?: Duration["amount"]; durationUnit?: Duration["unit"] };
-        if (duration.duration === 0) duration = {};
+        } : null);
+
+        if (duration && duration.duration === 0) {
+          duration = null;
+        }
+
+        const dueDateTime = eventGoogle.start?.dateTime ? day.utc(eventGoogle.start?.dateTime).toISOString() : day.utc(eventGoogle.start?.date).format("YYYY-MM-DD").toString();
 
         await safe(() => todoist.reopenTask(eventSync.todoistID));
         await safe(() => todoist.updateTask(eventSync.todoistID, {
@@ -83,7 +112,7 @@ const updateEvents = async(email: string): Promise<void> => {
             eventGoogle.location || "",
             eventGoogle.description || ""
           ].join("\n\n"),
-          dueDatetime: day.utc(eventGoogle.start?.dateTime).toISOString(),
+          dueDatetime: dueDateTime,
           ...duration
         }));
 

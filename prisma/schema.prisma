@@ -30,6 +30,8 @@ model EventSync {
 model EventsSyncProjects {
   id String @id @default(uuid())
 
-  email     String
-  projectID String
+  projectID   String
+  email       String?
+  eventTitles String[]
+  priority    Int      @unique
 }

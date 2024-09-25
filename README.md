@@ -30,6 +30,9 @@ TODOIST_TOKEN="Todoist Token"
 # PostgreSQL database URL:
 POSTGRES_URL="Postgres URL"
 
+# How many days you want to fecth on Todoist (default: 7):
+DAYSTOFECTH="7"
+
 # Ignored events (comma-separated list of event names):
 IGNORE_EVENTS="Absent au bureau,Running"
 ```
