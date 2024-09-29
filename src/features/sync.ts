@@ -20,7 +20,7 @@ const logUpdate = (action: "created" | "updated" | "deleted", event: CalendarEve
 };
 
 const createNextEvents = async(email: string): Promise<void> => {
-  const events = await google.getEvents(email, day(), day().add(env.DAYSTOFECTH, "day"));
+  const events = await google.getEvents(email, day(), day().add(Number(env.DAYSTOFECTH), "day"));
   const syncWithProjects = await db.eventsSyncProjects.findMany({
     orderBy: { priority: "asc" }
   });
@@ -57,7 +57,7 @@ const createNextEvents = async(email: string): Promise<void> => {
             event.description || ""
           ].join("\n\n"),
           dueDatetime: dueDateTime,
-          projectID: project.projectID,
+          projectId: project.projectID,
           ...duration
         });
 
@@ -80,7 +80,7 @@ const createNextEvents = async(email: string): Promise<void> => {
 };
 
 const updateEvents = async(email: string): Promise<void> => {
-  const eventsGoogle = await google.getEvents(email, day(), day().add(env.DAYSTOFECTH, "day"));
+  const eventsGoogle = await google.getEvents(email, day(), day().add(Number(env.DAYSTOFECTH), "day"));
   const eventsSync = await db.eventSync.findMany({ where: { googleEventID: { in: eventsGoogle.map(event => event.id!) } } });
 
   for (const eventSync of eventsSync) {
