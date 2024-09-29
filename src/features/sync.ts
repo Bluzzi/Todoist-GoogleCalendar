@@ -32,7 +32,7 @@ const createNextEvents = async(email: string): Promise<void> => {
     const eventSync = await db.eventSync.findFirst({ where: { googleEventID: event.id! } });
     if (eventSync) continue;
 
-    let duration: { duration?: Duration["amount"]; durationUnit?: Duration["unit"] } | null
+    let duration: { duration: Duration["amount"]; durationUnit: Duration["unit"] } | null
       = (event.end && event.start ? {
         duration: day(event.end.dateTime).diff(event.start.dateTime, "minute"),
         durationUnit: "minute"
@@ -92,7 +92,7 @@ const updateEvents = async(email: string): Promise<void> => {
 
         logUpdate("deleted", eventGoogle);
       } else {
-        let duration: { duration?: Duration["amount"]; durationUnit?: Duration["unit"] } | null
+        let duration: { duration: Duration["amount"]; durationUnit: Duration["unit"] } | null
         = (eventGoogle.end && eventGoogle.start ? {
           duration: day(eventGoogle.end.dateTime).diff(eventGoogle.start.dateTime, "minute"),
           durationUnit: "minute"
