@@ -30,9 +30,22 @@ TODOIST_TOKEN="Todoist Token"
 # PostgreSQL database URL:
 POSTGRES_URL="Postgres URL"
 
+# How many days you want to fecth on Todoist (default: 7):
+DAYSTOFECTH="7"
+
 # Ignored events (comma-separated list of event names):
 IGNORE_EVENTS="Absent au bureau,Running"
 ```
+
+You can also sync events from your Google Calendar with Todoist projects, for that you'll need to acces to the database and then go to the table `EventsSyncProjects`.
+
+Create a new row in the table with the properties :
+- `projectID`: The ID of the Todoist project (you can find it at the end of the url e.g: https://app.todoist.com/app/project/name-123456789)
+- `email` (optional): The email associated with a Google Calendar (all events from this calendar will go into the project)
+- `eventTitles` (optional): A list of event titles from your Google Calendar (all events that start with these titles will go into the project e.g: Lunch time, Focus time...)
+- `priority`: Defines the order of priority for applying different filter rules
+
+You must use at least either `email` or `eventTitles` to filter events into a Todoist project.
 
 ## Contributing
 Contributions are welcome! Feel free to submit issues or pull requests.
