@@ -1,4 +1,4 @@
-FROM node:19
+FROM node:22-alpine
 
 # Set workdir:
 WORKDIR /usr/src/app
