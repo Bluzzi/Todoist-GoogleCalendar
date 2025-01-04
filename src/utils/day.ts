@@ -1,3 +1,4 @@
+import type { Dayjs } from "dayjs";
 import dayjs from "dayjs";
 
 import utc from "dayjs/plugin/utc.js";
@@ -15,4 +16,4 @@ dayjs.extend(duration);
 dayjs.extend(localizedFormat);
 
 export const day = dayjs;
-export { Dayjs as Day } from "dayjs";
+export type Day = Dayjs;
