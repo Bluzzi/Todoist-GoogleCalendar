@@ -35,7 +35,6 @@ const createNextEvents = async (email: string): Promise<void> => {
         }
       : {}) satisfies { duration?: Duration["amount"]; durationUnit?: Duration["unit"] };
     if (duration.duration === 0) duration = {};
-    console.log(duration);
 
     const task = await todoist.addTask({
       content: event.summary ?? "No title",
