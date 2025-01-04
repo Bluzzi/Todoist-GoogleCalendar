@@ -1,11 +1,11 @@
 import dayjs from "dayjs";
 
-import utc from "dayjs/plugin/utc";
-import timezone from "dayjs/plugin/timezone";
-import duration from "dayjs/plugin/duration";
-import localizedFormat from "dayjs/plugin/localizedFormat";
+import utc from "dayjs/plugin/utc.js";
+import timezone from "dayjs/plugin/timezone.js";
+import duration from "dayjs/plugin/duration.js";
+import localizedFormat from "dayjs/plugin/localizedFormat.js";
 
-import "dayjs/locale/fr";
+import "dayjs/locale/fr.js";
 
 dayjs.locale("fr");
 
