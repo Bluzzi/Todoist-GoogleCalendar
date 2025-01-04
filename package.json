@@ -16,8 +16,8 @@
     "@googleapis/calendar": "^9.7.0",
     "@googleapis/people": "^3.0.7",
     "@hono/node-server": "^1.9.0",
-    "@prisma/client": "^5.11.0",
-    "croner": "^8.0.1",
+    "@prisma/client": "^6.1.0",
+    "croner": "^9.0.0",
     "dayjs": "^1.11.10",
     "dotenv": "^16.4.5",
     "google-auth-library": "^9.13.0",
@@ -26,13 +26,13 @@
     "zod": "^3.22.4"
   },
   "devDependencies": {
-    "@bluzzi/eslint-config": "^1.1.0",
+    "@bluzzi/eslint-config": "^2.0.0",
     "@swc-node/register": "^1.6.8",
     "@swc/core": "^1.7.4",
     "@types/node": "^22.0.2",
-    "eslint": "^8.50.0",
+    "eslint": "^9.17.0",
     "nodemon": "^3.0.1",
-    "prisma": "^5.11.0",
+    "prisma": "^6.1.0",
     "typescript": "^5.2.2"
   },
   "eslintConfig": {
