@@ -8,17 +8,17 @@ import { db } from "#/utils/db";
 import { randomUUID } from "crypto";
 import { logger } from "#/utils/logger";
 
-const url = env.RAILWAY_PUBLIC_DOMAIN ? env.RAILWAY_PUBLIC_DOMAIN : `http://localhost:${env.PORT}`;
+const url = env.RAILWAY_PUBLIC_DOMAIN ? env.RAILWAY_PUBLIC_DOMAIN : `http://localhost:${String(env.PORT)}`;
 const redirectPath = "/google/auth";
 const authorizationUUID = randomUUID();
 
 const app = new Hono<{ Bindings: HttpBindings }>();
 
-app.get(redirectPath, async context => {
+app.get(redirectPath, async (context) => {
   const client = new OAuth2Client(
     env.GOOGLE_CLIENT_ID,
     env.GOOGLE_CLIENT_SECRET,
-    `${url}${redirectPath}`
+    `${url}${redirectPath}`,
   );
 
   // If there is a code, we save it and give the connection a success:
@@ -36,7 +36,7 @@ app.get(redirectPath, async context => {
     await db.googleUser.upsert({
       where: { email },
       create: { email, refreshToken: tokenResponse.tokens.refresh_token! },
-      update: { refreshToken: tokenResponse.tokens.refresh_token! }
+      update: { refreshToken: tokenResponse.tokens.refresh_token! },
     });
 
     console.log(`NEW AUTHENTIFIED ACCOUNT: ${email}`);
@@ -53,8 +53,8 @@ app.get(redirectPath, async context => {
     scope: [
       "https://www.googleapis.com/auth/userinfo.email",
       "https://www.googleapis.com/auth/userinfo.profile",
-      "https://www.googleapis.com/auth/calendar"
-    ]
+      "https://www.googleapis.com/auth/calendar",
+    ],
   });
 
   return context.redirect(authorizeURL);

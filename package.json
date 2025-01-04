@@ -1,9 +1,10 @@
 {
+  "type": "module",
   "scripts": {
-    "start": "node -r @swc-node/register ./src/main.ts",
-    "dev": "nodemon --exec node -r @swc-node/register ./src/main.ts dev",
-    "lint": "eslint ./src",
-    "lint:fix": "eslint ./src --fix",
+    "start": "node --import @swc-node/register/esm-register ./src/main.ts",
+    "dev": "nodemon -w ./src/ --exec node --import @swc-node/register/esm-register ./src/main.ts dev",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
     "ts:check": "tsc --noEmit",
     "db:viewer": "prisma studio --port 3002",
     "db:migration:create": "prisma migrate dev",
@@ -34,11 +35,5 @@
     "nodemon": "^3.0.1",
     "prisma": "^6.1.0",
     "typescript": "^5.2.2"
-  },
-  "eslintConfig": {
-    "extends": "@bluzzi",
-    "rules": {
-      "camelcase": "off"
-    }
   }
 }

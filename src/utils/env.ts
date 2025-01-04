@@ -14,7 +14,7 @@ const schema = z.object({
 
   POSTGRES_URL: z.string().url(),
 
-  IGNORE_EVENTS: z.string().transform(value => value.split(",")).optional()
+  IGNORE_EVENTS: z.string().transform(value => value.split(",")).optional(),
 });
 
 export const env = schema.parse(process.env);

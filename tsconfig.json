@@ -1,18 +1,32 @@
 {
   "compilerOptions": {
-    "target": "ES2022",
-    "module": "commonjs",
-    
-    "strict": true,
-
-    "resolveJsonModule": true,
+    // Base options:
     "esModuleInterop": true,
-
     "skipLibCheck": true,
+    "target": "ES2024",
+    "allowJs": true,
+    "resolveJsonModule": true,
+    "moduleDetection": "force",
+    "isolatedModules": true,
+    "verbatimModuleSyntax": true,
 
+    // Strictness:
+    "strict": true,
+    "noUncheckedIndexedAccess": true,
+    "noImplicitOverride": true,
+    "noUncheckedSideEffectImports": true,
+
+    // Path alias:
     "baseUrl": ".",
     "paths": {
       "#/*": ["./src/*"]
-    }
+    },
+
+    // Not transpiling with TypeScript (tsc):
+    "module": "Preserve",
+    "noEmit": true,
+
+    // Lib options:
+    "lib": ["ES2023"]
   }
 }

@@ -7,7 +7,7 @@ import { OAuth2Client } from "google-auth-library";
 
 export type CalendarEvent = calendar_v3.Schema$Event & { calendarId: string };
 
-const client = async(email: string): Promise<OAuth2Client> => {
+const client = async (email: string): Promise<OAuth2Client> => {
   // Get curremt user data:
   const googleUser = await db.googleUser.findUnique({ where: { email } });
   if (!googleUser) throw Error("This email does not exist.");
@@ -24,13 +24,13 @@ const client = async(email: string): Promise<OAuth2Client> => {
   return client;
 };
 
-const getCalendars = async(email: string): Promise<calendar_v3.Schema$CalendarListEntry[]> => {
+const getCalendars = async (email: string): Promise<calendar_v3.Schema$CalendarListEntry[]> => {
   const api = calendar({ version: "v3", auth: await client(email) });
 
   return (await api.calendarList.list()).data.items!;
 };
 
-const getEvents = async(email: string, minDate?: Day, maxDate?: Day): Promise<CalendarEvent[]> => {
+const getEvents = async (email: string, minDate?: Day, maxDate?: Day): Promise<CalendarEvent[]> => {
   const api = calendar({ version: "v3", auth: await client(email) });
   const calendars = await getCalendars(email);
 
@@ -42,7 +42,7 @@ const getEvents = async(email: string, minDate?: Day, maxDate?: Day): Promise<Ca
       singleEvents: true,
       timeMin: minDate?.toISOString(),
       timeMax: maxDate?.toISOString(),
-      showDeleted: true
+      showDeleted: true,
     });
 
     events.push(...response.data.items!.map(event => ({ ...event, calendarId: cal.id! })));
@@ -51,7 +51,7 @@ const getEvents = async(email: string, minDate?: Day, maxDate?: Day): Promise<Ca
   return events;
 };
 
-const getEvent = async(email: string, calendarID: string, eventID: string): Promise<CalendarEvent> => {
+const getEvent = async (email: string, calendarID: string, eventID: string): Promise<CalendarEvent> => {
   const api = calendar({ version: "v3", auth: await client(email) });
 
   const response = await api.events.get({ calendarId: calendarID, eventId: eventID });

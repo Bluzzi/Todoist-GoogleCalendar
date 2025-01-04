@@ -5,7 +5,7 @@ export const ConsoleEffect = {
   Underscore: "\x1b[4m",
   Blink: "\x1b[5m",
   Reverse: "\x1b[7m",
-  Hidden: "\x1b[8m"
+  Hidden: "\x1b[8m",
 };
 
 export const ConsoleForground = {
@@ -16,7 +16,7 @@ export const ConsoleForground = {
   Blue: "\x1b[34m",
   Magenta: "\x1b[35m",
   Cyan: "\x1b[36m",
-  White: "\x1b[37m"
+  White: "\x1b[37m",
 };
 
 export const ConsoleBackground = {
@@ -27,11 +27,10 @@ export const ConsoleBackground = {
   Blue: "\x1b[44m",
   Magenta: "\x1b[45m",
   Cyan: "\x1b[46m",
-  White: "\x1b[47m"
+  White: "\x1b[47m",
 };
 
 class Logger {
-
   public info(prefix: string, message: string): void {
     console.log(`[${ConsoleForground.Blue}i${ConsoleEffect.Reset}] ${prefix.toUpperCase()}: ${message}`);
   }
@@ -47,7 +46,6 @@ class Logger {
   public error(prefix: string, message: string): void {
     console.log(`[${ConsoleForground.Red}×${ConsoleEffect.Reset}] ${prefix.toUpperCase()}: ${message}`);
   }
-
 }
 
 export const logger = new Logger();
