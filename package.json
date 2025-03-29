@@ -35,5 +35,15 @@
     "nodemon": "^3.0.1",
     "prisma": "^6.5.0",
     "typescript": "^5.8.2"
+  },
+  "packageManager": "pnpm",
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "@prisma/client",
+      "@prisma/engines",
+      "@swc/core",
+      "sbuil",
+      "rism"
+    ]
   }
 }
