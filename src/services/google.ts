@@ -1,8 +1,8 @@
 import type { calendar_v3 } from "@googleapis/calendar";
 import type { Day } from "#/utils/day";
+import { calendar } from "@googleapis/calendar";
 import { db } from "#/utils/db";
 import { env } from "#/utils/env";
-import { calendar } from "@googleapis/calendar";
 import { OAuth2Client } from "google-auth-library";
 
 export type CalendarEvent = calendar_v3.Schema$Event & { calendarId: string };
@@ -45,7 +45,7 @@ const getEvents = async (email: string, minDate?: Day, maxDate?: Day): Promise<C
       showDeleted: true,
     });
 
-    events.push(...response.data.items!.map(event => ({ ...event, calendarId: cal.id! })));
+    events.push(...response.data.items!.map((event) => ({ ...event, calendarId: cal.id! })));
   }
 
   return events;

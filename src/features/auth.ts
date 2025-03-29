@@ -1,12 +1,12 @@
 import type { HttpBindings } from "@hono/node-server";
-import { Hono } from "hono";
-import { serve } from "@hono/node-server";
-import { OAuth2Client } from "google-auth-library";
 import { people } from "@googleapis/people";
-import { env } from "#/utils/env";
+import { serve } from "@hono/node-server";
 import { db } from "#/utils/db";
-import { randomUUID } from "crypto";
+import { env } from "#/utils/env";
 import { logger } from "#/utils/logger";
+import { randomUUID } from "crypto";
+import { OAuth2Client } from "google-auth-library";
+import { Hono } from "hono";
 
 const url = env.RAILWAY_PUBLIC_DOMAIN ? env.RAILWAY_PUBLIC_DOMAIN : `http://localhost:${String(env.PORT)}`;
 const redirectPath = "/google/auth";
@@ -30,7 +30,7 @@ app.get(redirectPath, async (context) => {
 
     const peopleAPI = people({ version: "v1", auth: client });
     const emailResponse = await peopleAPI.people.get({ resourceName: "people/me", personFields: "emailAddresses" });
-    const email = emailResponse.data.emailAddresses?.find(addr => addr.metadata?.primary)?.value;
+    const email = emailResponse.data.emailAddresses?.find((addr) => addr.metadata?.primary)?.value;
     if (!email) return context.text("Error: unable to find your email");
 
     await db.googleUser.upsert({

@@ -1,5 +1,5 @@
-import type { CalendarEvent } from "#/services/google";
 import type { Duration } from "@doist/todoist-api-typescript";
+import type { CalendarEvent } from "#/services/google";
 import { google } from "#/services/google";
 import { todoist } from "#/services/todoist";
 import { day } from "#/utils/day";
@@ -23,7 +23,7 @@ const createNextEvents = async (email: string): Promise<void> => {
 
   for (const event of events) {
     if (event.status === "cancelled") continue;
-    if (env.IGNORE_EVENTS?.filter(ignoreName => ignoreName.toLowerCase().includes(event.summary?.toLowerCase() ?? "")).length) continue;
+    if (env.IGNORE_EVENTS?.filter((ignoreName) => ignoreName.toLowerCase().includes(event.summary?.toLowerCase() ?? "")).length) continue;
 
     const eventSync = await db.eventSync.findFirst({ where: { googleEventID: event.id! } });
     if (eventSync) continue;
@@ -60,10 +60,10 @@ const createNextEvents = async (email: string): Promise<void> => {
 
 const updateEvents = async (email: string): Promise<void> => {
   const eventsGoogle = await google.getEvents(email, day(), day().add(7, "day"));
-  const eventsSync = await db.eventSync.findMany({ where: { googleEventID: { in: eventsGoogle.map(event => event.id!) } } });
+  const eventsSync = await db.eventSync.findMany({ where: { googleEventID: { in: eventsGoogle.map((event) => event.id!) } } });
 
   for (const eventSync of eventsSync) {
-    const eventGoogle = eventsGoogle.find(event => event.id === eventSync.googleEventID)!;
+    const eventGoogle = eventsGoogle.find((event) => event.id === eventSync.googleEventID)!;
 
     if (day(eventGoogle.updated).toISOString() !== day(eventSync.googleLastUpdate).toISOString()) {
       if (eventGoogle.status === "cancelled") {
