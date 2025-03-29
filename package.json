@@ -42,8 +42,8 @@
       "@prisma/client",
       "@prisma/engines",
       "@swc/core",
-      "sbuil",
-      "rism"
+      "esbuild",
+      "prisma"
     ]
   }
 }
